@@ -4,7 +4,9 @@ import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { BlogHeader } from "@/components/blog-header";
 import { BlogFooter } from "@/components/blog-footer";
-import { getPostBySlug, posts, formatDate } from "@/lib/blog-data";
+import { posts } from "@/lib/blog-data";
+import { formatDate, formatReadTime } from "@/lib/blog-data";
+import { getPostBySlug } from "@/lib/api/public-fetch";
 import { PostContent } from "@/components/post-content";
 import type { Metadata } from "next";
 
@@ -17,8 +19,9 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  // TODO(cache): opt-in via "use cache" once cacheComponents enabled in next.config.mjs
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post) return { title: "Post Not Found" };
   return {
     title: `${post.title} | Blog`,
@@ -27,8 +30,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function PostPage({ params }: PageProps) {
+  // TODO(cache): opt-in via "use cache" once cacheComponents enabled in next.config.mjs
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     notFound();
@@ -61,9 +65,11 @@ export default async function PostPage({ params }: PageProps) {
                 {post.category}
               </span>
               <span>{"|"}</span>
-              <time dateTime={post.date}>{formatDate(post.date)}</time>
+              <time dateTime={post.publishedAt}>
+                {formatDate(post.publishedAt)}
+              </time>
               <span>{"|"}</span>
-              <span>{post.readTime}</span>
+              <span>{formatReadTime(post.readTimeMinutes)}</span>
             </div>
           </header>
 

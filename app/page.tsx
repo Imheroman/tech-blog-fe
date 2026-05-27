@@ -2,16 +2,16 @@ import { BlogHeader } from "@/components/blog-header";
 import { BlogFooter } from "@/components/blog-footer";
 import { PostList } from "@/components/post-list";
 import { HeroCarousel } from "@/components/hero-carousel";
-import { posts, getPopularPosts } from "@/lib/blog-data";
+import { getPosts, getPopularPosts } from "@/lib/api/public-fetch";
 
-export default function Page() {
-  // Hero carousel cycles through the most popular posts (by views).
-  const heroPosts = getPopularPosts(5);
+export default async function Page() {
+  // TODO(cache): opt-in via "use cache" once cacheComponents enabled in next.config.mjs
 
-  // The list shows all posts (newest first) with pagination.
-  const listPosts = [...posts].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
+  // Hero carousel: top 5 posts by views
+  const heroPosts = await getPopularPosts(5);
+
+  // List: fetch all published posts (size: 50 covers current dataset; no pagination UI in this story)
+  const { data: listPosts } = await getPosts({ page: 0, size: 50, sort: "publishedAt,desc" });
 
   return (
     <div className="flex min-h-screen flex-col">
