@@ -2,8 +2,6 @@
 
 /**
  * LoginForm — 이메일/비밀번호 로그인 폼.
- *
- * TODO: OAuth 버튼(Google, Kakao)은 이후 변경에서 추가됩니다.
  */
 
 import { useActionState } from "react";
@@ -11,6 +9,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { OAuthButtons } from "@/components/auth/oauth-buttons";
 
 // ---------------------------------------------------------------------------
 // 액션 상태 타입
@@ -112,6 +111,14 @@ export function LoginForm(): React.ReactElement {
       <Button type="submit" className="w-full" disabled={isPending}>
         {isPending ? "로그인 중..." : "로그인"}
       </Button>
+
+      <div className="relative my-2 flex items-center">
+        <div className="flex-1 border-t border-border" />
+        <span className="mx-3 text-xs text-muted-foreground">또는</span>
+        <div className="flex-1 border-t border-border" />
+      </div>
+
+      <OAuthButtons />
     </form>
   );
 }
