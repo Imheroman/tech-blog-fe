@@ -1,0 +1,3 @@
+# 빈 이슈 허용(템플릿 없이도 생성 가능) — 1인 레포라 유연성 유지.
+# 템플릿 강제하려면 false 로 변경.
+blank_issues_enabled: true
