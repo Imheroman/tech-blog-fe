@@ -9,8 +9,11 @@ import { formatDate, formatReadTime } from "@/lib/blog-data";
 import { getPostBySlug } from "@/lib/api/public-fetch";
 import { PostContent } from "@/components/post-content";
 import { LikeButton } from "@/components/like-button";
+import { CommentSection } from "@/components/comments/comment-section";
 import { getUser } from "@/lib/dal";
 import { getLikeState } from "@/lib/api/likes";
+import { listComments } from "@/lib/api/comments";
+import type { Comment, Envelope } from "@/lib/api/comments";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -42,6 +45,22 @@ export default async function PostPage({ params }: PageProps) {
   }
 
   const like = await getLikeState(slug, user?.userId ?? null);
+
+  const emptyEnvelope: Envelope<Comment> = {
+    data: [],
+    page: 0,
+    size: 10,
+    totalElements: 0,
+    totalPages: 1,
+    hasNext: false,
+    sort: "createdAt,desc",
+  };
+  let comments: Envelope<Comment>;
+  try {
+    comments = await listComments(slug, { page: 0, size: 10 });
+  } catch {
+    comments = emptyEnvelope;
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -103,6 +122,13 @@ export default async function PostPage({ params }: PageProps) {
           <div className="pt-8">
             <PostContent content={post.content} />
           </div>
+
+          {/* Comments */}
+          <CommentSection
+            slug={slug}
+            initial={comments}
+            isAuthenticated={!!user}
+          />
         </article>
       </main>
       <BlogFooter />
