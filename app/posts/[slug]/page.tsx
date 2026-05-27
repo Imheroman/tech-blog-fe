@@ -8,6 +8,9 @@ import { posts } from "@/lib/blog-data";
 import { formatDate, formatReadTime } from "@/lib/blog-data";
 import { getPostBySlug } from "@/lib/api/public-fetch";
 import { PostContent } from "@/components/post-content";
+import { LikeButton } from "@/components/like-button";
+import { getUser } from "@/lib/dal";
+import { getLikeState } from "@/lib/api/likes";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -32,11 +35,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function PostPage({ params }: PageProps) {
   // TODO(cache): opt-in via "use cache" once cacheComponents enabled in next.config.mjs
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const [post, user] = await Promise.all([getPostBySlug(slug), getUser()]);
 
   if (!post) {
     notFound();
   }
+
+  const like = await getLikeState(slug, user?.userId ?? null);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -70,6 +75,12 @@ export default async function PostPage({ params }: PageProps) {
               </time>
               <span>{"|"}</span>
               <span>{formatReadTime(post.readTimeMinutes)}</span>
+              <span>{"|"}</span>
+              <LikeButton
+                slug={slug}
+                initial={like}
+                isAuthenticated={!!user}
+              />
             </div>
           </header>
 
