@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { Post } from "@/lib/blog-data";
+import type { PostSummary } from "@/lib/api/public-fetch";
 
 interface HeroCarouselProps {
-  posts: Post[];
+  posts: PostSummary[];
 }
 
 export function HeroCarousel({ posts }: HeroCarouselProps) {

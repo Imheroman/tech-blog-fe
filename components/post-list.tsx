@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import type { Post } from "@/lib/blog-data";
+import type { PostSummary } from "@/lib/api/public-fetch";
 import { PostCard } from "@/components/post-card";
 import { CategoryTabs } from "@/components/category-tabs";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PostListProps {
-  initialPosts: Post[];
+  initialPosts: PostSummary[];
 }
 
 const PAGE_SIZE = 4;

@@ -1,10 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { Post } from "@/lib/blog-data";
-import { formatDate } from "@/lib/blog-data";
+import type { PostSummary } from "@/lib/api/public-fetch";
+import { formatDate, formatReadTime } from "@/lib/blog-data";
 
 interface PostCardProps {
-  post: Post;
+  post: PostSummary;
 }
 
 export function PostCard({ post }: PostCardProps) {
@@ -24,9 +24,11 @@ export function PostCard({ post }: PostCardProps) {
               {post.category}
             </span>
             <span>{"|"}</span>
-            <time dateTime={post.date}>{formatDate(post.date)}</time>
+            <time dateTime={post.publishedAt}>
+              {formatDate(post.publishedAt)}
+            </time>
             <span>{"|"}</span>
-            <span>{post.readTime}</span>
+            <span>{formatReadTime(post.readTimeMinutes)}</span>
           </div>
         </div>
 
