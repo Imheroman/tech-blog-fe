@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function BlogHeader() {
   return (
@@ -25,6 +26,7 @@ export function BlogHeader() {
           >
             GitHub
           </a>
+          <ThemeToggle />
         </nav>
       </div>
     </header>
