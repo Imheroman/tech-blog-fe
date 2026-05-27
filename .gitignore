@@ -1,0 +1,54 @@
+# personal
+CLAUDE.md
+docdoc
+.claude
+.codex
+
+# 루트 중복 테스트 이미지 (public/test-image.png 사용)
+/test-image.png
+
+# v0 runtime files (should only exist in preview, not in git)
+__v0_runtime_loader.js
+__v0_devtools.tsx
+__v0_jsx-dev-runtime.ts
+instrumentation-client.js
+instrumentation-client.ts
+
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+dist/
+build/
+out/
+
+# TypeScript / Next.js generated
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment variables (keep .env.example tracked)
+.env
+.env.*
+!.env.example
+
+# Secrets / keys
+*.pem
+*.key
+id_rsa
+id_rsa.*
+service-account*.json
+*credentials*
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/settings.json
+
+# Claude Code local (personal) settings
+.claude/settings.local.json
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
