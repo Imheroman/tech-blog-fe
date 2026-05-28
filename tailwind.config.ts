@@ -65,6 +65,12 @@ const config: Config = {
           ring: 'hsl(var(--sidebar-ring))',
         },
       },
+      maxHeight: {
+        // 히어로 배너 높이 상한: 헤더(h-14)+인트로 섹션 높이를 제외한 뷰포트 여백.
+        // 16:9 비율로 계산된 높이가 이보다 작으면(세로 긴 화면) 비율이 우선,
+        // 크면(세로 짧은 화면) 이 값으로 클램프되어 한 화면에 들어온다.
+        hero: 'calc(100dvh - 16rem)',
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',

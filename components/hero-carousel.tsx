@@ -32,9 +32,10 @@ export function HeroCarousel({ posts }: HeroCarouselProps) {
   }, [index, hasMultiple, posts.length]);
 
   return (
-    // Contained banner: shares the body's max-width/padding. A fixed 16:9
-    // aspect ratio keeps the proportions identical across monitor sizes.
-    <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl">
+    // Contained banner: shares the body's max-width/padding. A 16:9 aspect
+    // ratio governs the height, but `max-h-hero` clamps it on short viewports
+    // so the banner always fits within one screen (image stays object-cover).
+    <div className="relative aspect-video max-h-hero w-full overflow-hidden rounded-2xl">
       <Link href={`/posts/${post.slug}`} className="group block h-full w-full">
         <Image
           src={post.thumbnail || "/placeholder.svg"}
