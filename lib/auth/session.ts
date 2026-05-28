@@ -15,6 +15,7 @@ export interface SessionData {
   accessExp?: number;
   userId?: string;
   role?: Role;
+  nickname?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -125,6 +126,7 @@ export async function saveSession(data: { tokens: Tokens; session: Session }): P
     accessExp: tokens.accessExp,
     userId: session.userId,
     role: session.role,
+    nickname: session.nickname,
   };
 
   const size = await sealedSizeBytes(payload);
@@ -141,6 +143,7 @@ export async function saveSession(data: { tokens: Tokens; session: Session }): P
   ironSession.accessExp = payload.accessExp;
   ironSession.userId = payload.userId;
   ironSession.role = payload.role;
+  ironSession.nickname = payload.nickname;
   await ironSession.save();
 }
 
@@ -155,10 +158,10 @@ export async function destroySession(): Promise<void> {
 
 /**
  * RSC 전용 읽기 전용 헬퍼.
- * 세션에 userId 가 있으면 `{ userId, role }` 을 반환하고, 없으면 null 을 반환합니다.
+ * 세션에 userId 가 있으면 `{ userId, role, nickname }` 을 반환하고, 없으면 null 을 반환합니다.
  * 이 함수는 세션을 쓰거나 저장하지 않습니다.
  */
-export async function getCurrentUser(): Promise<{ userId: string; role: Role } | null> {
+export async function getCurrentUser(): Promise<{ userId: string; role: Role; nickname: string } | null> {
   const ironSession = await getSession();
   if (!ironSession.userId) {
     return null;
@@ -166,5 +169,6 @@ export async function getCurrentUser(): Promise<{ userId: string; role: Role } |
   return {
     userId: ironSession.userId,
     role: ironSession.role ?? "USER",
+    nickname: ironSession.nickname ?? "",
   };
 }
