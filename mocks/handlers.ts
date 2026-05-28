@@ -1,25 +1,27 @@
 import { http, HttpResponse } from "msw";
 
-interface LoginRequestBody {
-  email: string;
-  password: string;
+/**
+ * 상위 Spring `/api/v1/*` 계약을 모사하는 MSW 핸들러.
+ *
+ * 응답 형태는 실제 데이터 계약(`lib/auth/port.ts`·`lib/api/*` 타입)과 일치시킨다:
+ *   - 인증 엔드포인트(login/reissue/oauth)는 토큰을 반환(사용자 정보는 `/me`에서 조회).
+ *   - `/me`는 `{ id, nickname, role }`.
+ *   - 좋아요 상태는 `{ likeCount, isLiked }`.
+ */
+
+/** 개발용 가짜 토큰 쌍을 생성합니다. accessExp 는 epoch 초. */
+function mockTokens() {
+  return {
+    accessToken: "mock-access-token",
+    refreshToken: "mock-refresh-token",
+    accessExp: Math.floor(Date.now() / 1000) + 60 * 30,
+  };
 }
 
-type OAuthCallbackParams = {
-  provider: string;
-};
-
 export const handlers = [
-  // 로그인
-  http.post("*/api/v1/auth/login", async ({ request }) => {
-    const body = (await request.json()) as LoginRequestBody;
-    return HttpResponse.json({
-      user: {
-        id: 1,
-        name: body.email?.split("@")[0] ?? "dev-user",
-        role: "USER" as const,
-      },
-    });
+  // 로그인 — 상위 계약: 토큰 반환(사용자 정보는 /me)
+  http.post("*/api/v1/auth/login", () => {
+    return HttpResponse.json(mockTokens());
   }),
 
   // 로그아웃
@@ -27,33 +29,23 @@ export const handlers = [
     return new HttpResponse(null, { status: 204 });
   }),
 
-  // 토큰 재발급
+  // 토큰 재발급 — 새 토큰 쌍 반환
   http.post("*/api/v1/auth/reissue", () => {
-    return HttpResponse.json({
-      accessExp: Date.now() + 1000 * 60 * 30,
-    });
+    return HttpResponse.json(mockTokens());
   }),
 
-  // 내 정보 조회
+  // 내 정보 조회 — { id, nickname, role }
   http.get("*/api/v1/auth/me", () => {
     return HttpResponse.json({
-      id: 1,
-      name: "dev-user",
+      id: "user-1",
+      nickname: "dev-user",
       role: "USER" as const,
     });
   }),
 
-  // OAuth 콜백
-  http.post<OAuthCallbackParams>("*/api/v1/auth/oauth/:provider/callback", ({ params }) => {
-    const { provider } = params;
-    return HttpResponse.json({
-      user: {
-        id: 1,
-        name: `${provider}-user`,
-        role: "USER" as const,
-      },
-      isNewUser: false,
-    });
+  // OAuth 콜백(코드 교환) — 상위 계약: 토큰 반환
+  http.post("*/api/v1/auth/oauth/:provider/callback", () => {
+    return HttpResponse.json(mockTokens());
   }),
 
   // 게시글 목록 조회
@@ -73,7 +65,7 @@ export const handlers = [
   http.get("*/api/v1/posts/:slug/like", () => {
     return HttpResponse.json({
       likeCount: 0,
-      isLikedByMe: false,
+      isLiked: false,
     });
   }),
 
@@ -81,7 +73,7 @@ export const handlers = [
   http.put("*/api/v1/posts/:slug/like", () => {
     return HttpResponse.json({
       likeCount: 1,
-      isLikedByMe: true,
+      isLiked: true,
     });
   }),
 
@@ -89,7 +81,7 @@ export const handlers = [
   http.delete("*/api/v1/posts/:slug/like", () => {
     return HttpResponse.json({
       likeCount: 0,
-      isLikedByMe: false,
+      isLiked: false,
     });
   }),
 ];
